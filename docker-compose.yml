@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  redis:
+      image: redis:latest
+      container_name: redis
+      ports:
+        - "6379:6379"
+      volumes:
+        - redis:/data
+  shortener:
+      container_name: shortener
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - "8080:8080"
+      depends_on:
+        - redis
+volumes:
+  redis:
