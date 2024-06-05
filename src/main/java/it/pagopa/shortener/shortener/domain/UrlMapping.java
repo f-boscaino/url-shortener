@@ -8,69 +8,68 @@ import org.apache.commons.validator.ValidatorException;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
-//@Data
 @RedisHash("UrlMapping")
-//@NoArgsConstructor
 public class UrlMapping {
-	
-	@Id
-	private String shortUrl;
-	private String longUrl;
-	private LocalDate expiration;
-	
-	private void validateUrl(String url) throws ValidatorException {
-		if (!new UrlValidator().isValid(url))  {
-			throw new ValidatorException("Malformed URL");
-		}
-	}
 
-	
-	public UrlMapping(String longUrl) throws ValidatorException {
-		validateUrl(longUrl);
-		this.shortUrl = generateShortUrl();
-		this.longUrl = longUrl;
-		this.expiration = LocalDate.now().plusDays(30);
-	}
+    private static final Long EXPIRATION_IN_SECONDS = 2592000L;
+    @Id
+    private String shortUrl;
+    private String longUrl;
+    @TimeToLive
+    private Long expiration = EXPIRATION_IN_SECONDS;
 
-	public UrlMapping clone() {
-		return new UrlMapping(this.shortUrl, this.longUrl, this.expiration);
-	}
+    public UrlMapping() {
+    }
 
-	private UrlMapping(String shortUrl, String longUrl, LocalDate expiration) {
-		this.shortUrl = shortUrl;
-		this.longUrl = longUrl;
+    private UrlMapping(String shortUrl, String longUrl, Long expiration) {
+        this.shortUrl = shortUrl;
+        this.longUrl = longUrl;
 		this.expiration = expiration;
-	}
+    }
 
-	private String generateShortUrl() {
-		return UUID.randomUUID().toString().substring(0, 8);
-	}
+    public UrlMapping(String longUrl) throws ValidatorException {
+        validateUrl(longUrl);
+        this.shortUrl = generateShortUrl();
+        this.longUrl = longUrl;
+    }
 
-	public String getShortUrl() {
-		return shortUrl;
-	}
+    public UrlMapping clone() {
+        return new UrlMapping(this.shortUrl, this.longUrl, this.expiration);
+    }
 
-	public void setShortUrl(String shortUrl) {
-		this.shortUrl = shortUrl;
-	}
+    public String getShortUrl() {
+        return shortUrl;
+    }
 
-	public String getLongUrl() {
-		return longUrl;
-	}
+    public void setShortUrl(String shortUrl) {
+        this.shortUrl = shortUrl;
+    }
 
-	public void setLongUrl(String longUrl) {
-		this.longUrl = longUrl;
-	}
+    public String getLongUrl() {
+        return longUrl;
+    }
 
-	public LocalDate getExpiration() {
-		return expiration;
-	}
+    public void setLongUrl(String longUrl) {
+        this.longUrl = longUrl;
+    }
 
-	public void setExpiration(LocalDate expiration) {
-		this.expiration = expiration;
-	}
+    public Long getExpiration() {
+        return expiration;
+    }
 
-	public UrlMapping() {
-	}
+    public void setExpiration(Long expiration) {
+        this.expiration = expiration;
+    }
+
+    private void validateUrl(String url) throws ValidatorException {
+        if (!new UrlValidator().isValid(url)) {
+            throw new ValidatorException("Malformed URL");
+        }
+    }
+
+    private String generateShortUrl() {
+        return UUID.randomUUID().toString().substring(0, 8);
+    }
 }
