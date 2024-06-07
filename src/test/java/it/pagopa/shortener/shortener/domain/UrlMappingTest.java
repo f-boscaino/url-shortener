@@ -10,7 +10,10 @@ class UrlMappingTest {
 
     @Test
     public void anUrlMappingIsCreatedSuccessfully() throws ValidatorException {
+        // When
         UrlMapping underTest = new UrlMapping("http://www.example.com");
+
+        // Then
         assertNotNull(underTest.getShortUrl());
     }
 

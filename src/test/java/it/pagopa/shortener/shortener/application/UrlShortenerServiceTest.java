@@ -20,6 +20,8 @@ class UrlShortenerServiceTest {
 
     @Test
     void itShouldRetryCreatingANewShortUrlIfItAlreadyExists() throws ValidatorException {
+
+        // Given
         UrlShortenerService underTest = new UrlShortenerService(urlMappingRepositoryMock);
 
         // Input object, it has a non-unique key
@@ -36,9 +38,10 @@ class UrlShortenerServiceTest {
         // The save() method returns the first parameter (the persisted object)
         when(urlMappingRepositoryMock.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
-
+        // When
         UrlMapping returnValue = underTest.save(urlMappingWithExistingId);
 
+        // Then
         verify(urlMappingRepositoryMock, times(1)).findById(eq("existing-short-url"));
         verify(urlMappingRepositoryMock, times(1)).findById(eq(returnValue.getShortUrl()));
     }

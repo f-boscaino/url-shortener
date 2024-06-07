@@ -27,11 +27,13 @@ class UrlShortenerControllerTest {
 
     @Test
     public void theGetEndpointShouldRedirectToTheLongUrl() throws Exception {
+        // Given
         String shortUrl = "123";
         String longUrl = "http://www.example.com";
         Optional<UrlMapping> urlMapping = Optional.of(new UrlMapping(longUrl));
         when(urlShortenerService.getByShortUrl(shortUrl)).thenReturn(urlMapping);
 
+        // Then
         mockMvc.perform(get("/"+shortUrl))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(longUrl));
@@ -45,6 +47,7 @@ class UrlShortenerControllerTest {
 
     @Test
     public void theAddEndpointShouldReturnAShortUrl() throws Exception {
+        // Given
         String shortUrl = "123";
         String longUrl = "http://www.example.com";
         UrlMapping urlMapping = new UrlMapping(longUrl);
@@ -52,6 +55,8 @@ class UrlShortenerControllerTest {
         when(urlShortenerService.save(any())).thenReturn(urlMapping);
 
         String jsonRequest = "{ \"url\": \""+longUrl+"\"}";
+
+        // Then
         mockMvc.perform(post("/add")
                 .contentType("application/json")
                 .content(jsonRequest))
