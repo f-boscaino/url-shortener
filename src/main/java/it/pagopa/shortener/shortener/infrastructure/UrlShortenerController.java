@@ -18,6 +18,12 @@ public class UrlShortenerController {
         this.urlShortenerService = urlShortenerService;
     }
 
+    /**
+     * Redirects the user to the URL corresponding to the input shortUrl
+     *
+     * @param response the HTTP request object
+     * @param shortUrl the input shortUrl
+     */
     @GetMapping("/{shortUrl}")
     public void redirect(HttpServletResponse response, @PathVariable String shortUrl) {
         Optional<UrlMapping> optionalUrlMapping = urlShortenerService.getByShortUrl(shortUrl);
@@ -40,6 +46,14 @@ public class UrlShortenerController {
         );
     }
 
+    /**
+     * Generates a new unique shortUrl, persisting the association between the input URL and the generated shortUrl
+     *
+     * @param request the request body, containing the input URL
+     * @param response HTTP response object
+     * @return the generated shortUrl
+     * @throws ValidatorException if the input string is not a valid URL
+     */
     @PostMapping("/add")
     @ResponseBody
     public String add(@RequestBody AddUrlMappingRequest request, HttpServletResponse response) throws ValidatorException {

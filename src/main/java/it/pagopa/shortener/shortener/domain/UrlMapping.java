@@ -1,6 +1,5 @@
 package it.pagopa.shortener.shortener.domain;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 
@@ -63,12 +62,23 @@ public class UrlMapping {
         this.expiration = expiration;
     }
 
+    /**
+     * Throws an exception if the input string is not a valid URL
+     *
+     * @param url the input string to check
+     * @throws ValidatorException if the input string is not a valid URL
+     */
     private void validateUrl(String url) throws ValidatorException {
         if (!new UrlValidator().isValid(url)) {
             throw new ValidatorException("Malformed URL");
         }
     }
 
+    /**
+     * Generates a random string, using the first characters of a random UUID
+     *
+     * @return a random string
+     */
     private String generateShortUrl() {
         return UUID.randomUUID().toString().substring(0, 8);
     }
